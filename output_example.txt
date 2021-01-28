@@ -1,0 +1,115 @@
+Parsing chessboards in air
+Calibrating Camera in Air...
+Found 109 valid images for calibration
+DIM = (1440, 1080)
+K = np.array([[2415.821939189986, 0.0, 752.2894701822571], [0.0, 2421.0427978309826, 571.3217805375626], [0.0, 0.0, 1.0]])
+D = np.array([[-0.36325946781936186, 0.07022978004167112, 0.0009562305197264028, 0.0006006794301044205, 1.1602066167799476]])
+Parsing chessboards underwater
+initial camera center offset:  [ 0.    0.   -0.01]
+camera center offset:  [ 0.    0.   -0.01]
+reprojection residual:  341.08458855652043
+camera center offset:  [ 0.    0.   -0.01]
+reprojection residual:  341.08458855652043
+camera center offset:  [ 0.    0.   -0.01]
+reprojection residual:  341.08458855652043
+camera center offset:  [ 0.001  0.    -0.01 ]
+reprojection residual:  578.528663076913
+camera center offset:  [ 0.     0.001 -0.01 ]
+reprojection residual:  515.7702443551558
+camera center offset:  [ 0.       0.      -0.00999]
+reprojection residual:  340.49828962250564
+camera center offset:  [-2.04135139e-05  9.86042064e-05 -9.00894138e-03]
+reprojection residual:  288.4978511245748
+camera center offset:  [-2.03931003e-05  9.86042064e-05 -9.00894138e-03]
+reprojection residual:  288.5102024933465
+camera center offset:  [-2.04135139e-05  9.87028106e-05 -9.00894138e-03]
+reprojection residual:  288.59516826133955
+camera center offset:  [-2.04135139e-05  9.86042064e-05 -8.99993244e-03]
+reprojection residual:  288.10040379159744
+camera center offset:  [-2.80688664e-05  8.69680468e-05 -8.12156296e-03]
+reprojection residual:  257.315265144031
+camera center offset:  [-2.80407976e-05  8.69680468e-05 -8.12156296e-03]
+reprojection residual:  257.319678507072
+camera center offset:  [-2.80688664e-05  8.70550149e-05 -8.12156296e-03]
+reprojection residual:  257.04521990430175
+camera center offset:  [-2.80688664e-05  8.69680468e-05 -8.11344140e-03]
+reprojection residual:  256.69872419459045
+camera center offset:  [-3.15692659e-05  8.16701273e-05 -7.58570378e-03]
+reprojection residual:  237.4163747342742
+camera center offset:  [-3.15376966e-05  8.16701273e-05 -7.58570378e-03]
+reprojection residual:  237.4194803028067
+camera center offset:  [-3.15692659e-05  8.17517974e-05 -7.58570378e-03]
+reprojection residual:  237.42290853487253
+camera center offset:  [-3.15692659e-05  8.16701273e-05 -7.57811808e-03]
+reprojection residual:  237.1704060101491
+camera center offset:  [-3.39622251e-05  7.94086093e-05 -7.27513893e-03]
+reprojection residual:  226.2985825022601
+camera center offset:  [-3.39282629e-05  7.94086093e-05 -7.27513893e-03]
+reprojection residual:  226.2886785769268
+camera center offset:  [-3.39622251e-05  7.94880179e-05 -7.27513893e-03]
+reprojection residual:  226.27711021131537
+camera center offset:  [-3.39622251e-05  7.94086093e-05 -7.26786379e-03]
+reprojection residual:  226.69352122298966
+camera center offset:  [-1.75581181e-05  8.09251918e-05 -7.36895400e-03]
+reprojection residual:  230.30995661257774
+camera center offset:  [-1.75581181e-05  8.09251918e-05 -7.36895400e-03]
+reprojection residual:  230.30995661257774
+camera center offset:  [-1.75581181e-05  8.09251918e-05 -7.36895400e-03]
+reprojection residual:  230.30995661257774
+camera center offset:  [-1.30017125e-05  8.09864856e-05 -7.32993596e-03]
+reprojection residual:  230.9262784666781
+camera center offset:  [-1.59504272e-05  8.15332879e-05 -7.29239593e-03]
+reprojection residual:  228.95442134970943
+camera center offset:  [-2.49014096e-05  8.16247625e-05 -7.28071547e-03]
+reprojection residual:  224.4858137110297
+camera center offset:  [-2.48765082e-05  8.16247625e-05 -7.28071547e-03]
+reprojection residual:  225.57273563097695
+camera center offset:  [-2.49014096e-05  8.17063873e-05 -7.28071547e-03]
+reprojection residual:  220.5333978220942
+camera center offset:  [-2.49014096e-05  8.16247625e-05 -7.27343476e-03]
+reprojection residual:  219.65357168931666
+camera center offset:  [-2.45396009e-05  8.19261937e-05 -7.25897399e-03]
+reprojection residual:  223.52670270361347
+camera center offset:  [-2.45150613e-05  8.19261937e-05 -7.25897399e-03]
+reprojection residual:  223.1033289500958
+camera center offset:  [-2.45396009e-05  8.20081199e-05 -7.25897399e-03]
+reprojection residual:  221.84473717169118
+camera center offset:  [-2.45396009e-05  8.19261937e-05 -7.25171501e-03]
+reprojection residual:  227.47477596280294
+camera center offset:  [-2.58018946e-05  8.39579301e-05 -7.24821817e-03]
+reprojection residual:  219.44403883946785
+camera center offset:  [-2.57760927e-05  8.39579301e-05 -7.24821817e-03]
+reprojection residual:  218.3382557219415
+camera center offset:  [-2.58018946e-05  8.40418881e-05 -7.24821817e-03]
+reprojection residual:  219.38530831209917
+camera center offset:  [-2.58018946e-05  8.39579301e-05 -7.24096995e-03]
+reprojection residual:  227.1087590284916
+camera center offset:  [-2.54238790e-05  8.45122035e-05 -7.24065696e-03]
+reprojection residual:  218.29686440501249
+camera center offset:  [-2.53984551e-05  8.45122035e-05 -7.24065696e-03]
+reprojection residual:  218.32116084659603
+camera center offset:  [-2.54238790e-05  8.45967157e-05 -7.24065696e-03]
+reprojection residual:  218.25721916922635
+camera center offset:  [-2.54238790e-05  8.45122035e-05 -7.23341630e-03]
+reprojection residual:  227.25708740284162
+camera center offset:  [-2.69071008e-05  8.75513404e-05 -7.24506505e-03]
+reprojection residual:  225.97349910714092
+camera center offset:  [-2.57481423e-05  8.47112911e-05 -7.24148153e-03]
+reprojection residual:  219.38562827002374
+camera center offset:  [-2.55103692e-05  8.45575696e-05 -7.24086799e-03]
+reprojection residual:  218.24534972942124
+camera center offset:  [-2.54848588e-05  8.45575696e-05 -7.24086799e-03]
+reprojection residual:  218.22609931906774
+camera center offset:  [-2.55103692e-05  8.46421272e-05 -7.24086799e-03]
+reprojection residual:  218.2358986319307
+camera center offset:  [-2.55103692e-05  8.45575696e-05 -7.23362712e-03]
+reprojection residual:  227.198870113994
+camera center offset:  [-2.54410873e-05  8.45549474e-05 -7.24097477e-03]
+reprojection residual:  218.27952057427908
+camera center offset:  [-2.54811217e-05  8.45564390e-05 -7.24091300e-03]
+reprojection residual:  218.22538172188808
+camera center offset:  [-2.54556406e-05  8.45564390e-05 -7.24091300e-03]
+reprojection residual:  218.27013563032466
+camera center offset:  [-2.54811217e-05  8.46409955e-05 -7.24091300e-03]
+reprojection residual:  218.26311760454345
+camera center offset:  [-2.54811217e-05  8.45564390e-05 -7.23367209e-03]
