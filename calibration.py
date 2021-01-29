@@ -4,7 +4,7 @@ import numpy as np
 import cv2
 import glob
 
-IMAGES_PATH = "underwater1100/"
+IMAGES_PATH = "air1100/"
 IMAGES_TYPE = "*.png"
 UNDISTORT_OUTFOLDER = "output/"
 
@@ -96,7 +96,7 @@ for fname in images:
     # undistort
     mapx, mapy = cv2.initUndistortRectifyMap(K, D, None, K_new, (w, h), cv2.CV_32FC1)
     dst = cv2.remap(img, mapx, mapy, cv2.INTER_CUBIC)
-    print(mapx, mapy)
+    # print(mapx, mapy)
 
     # crop the image
     # x,y,w,h = roi

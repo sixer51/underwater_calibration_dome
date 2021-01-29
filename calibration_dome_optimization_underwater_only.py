@@ -11,7 +11,6 @@ from scipy.optimize import least_squares
 from scipy.optimize import newton
 import time
 
-IMAGES_PATH_AIR = "air1100/"
 IMAGES_PATH = "underwater1100/"
 IMAGES_TYPE = "*.png"
 
@@ -106,7 +105,7 @@ def ray_trace_residuals(imgpoints, objpoints, rvec, tvec, cal_params, dome_param
     # print("M: ", M_ex)
 
     # print(objpoints)
-    chessboard_origin = M_ex[:3, 3]
+    chessboard_origin = M_ex[:3, 3] + camera_center_offset
 
     # compute chessboard normal
     z_axis_point_chessboard = np.array([0, 0, 1, 1])
@@ -116,17 +115,24 @@ def ray_trace_residuals(imgpoints, objpoints, rvec, tvec, cal_params, dome_param
     # print("normal: ", chessboard_normal)
 
     total_residual = 0
-    for cornerid in range(0, len(undistorted_imgpoints), 10):
+    all_residual = []
+    for cornerid in range(len(undistorted_imgpoints)):
+    # for cornerid in range(0, len(undistorted_imgpoints), 10):
     # for cornerid in [3]:
         objpoint = np.concatenate((objpoints[cornerid], [1]))
         objpoint_cam = np.matmul(M_ex, objpoint)
-        objpoint_cam = objpoint_cam[:3]
+        objpoint_cam = objpoint_cam[:3] + camera_center_offset
 
         reprojected_imgpoint = reprojected_imgpoints[2*(cornerid): 2*(cornerid+1)]
         # print(cornerid, reprojected_imgpoint)
-        total_residual += ray_trace_residual(undistorted_imgpoints[cornerid], reprojected_imgpoint, objpoint_cam, chessboard_normal, chessboard_origin, cal_params, dome_params, camera_center_offset)
+        residual = ray_trace_residual(undistorted_imgpoints[cornerid], reprojected_imgpoint, objpoint_cam, chessboard_normal, chessboard_origin, cal_params, dome_params, camera_center_offset)
+        total_residual += residual
+        all_residual.append(residual)
+        # print(cornerid, residual)
+    mean_residual = total_residual / len(all_residual)
 
-    # print("total_residual: ", total_residual)
+    # print("3d position total residual: ", total_residual)
+    # print("3d position mean residual: ", mean_residual)
     return total_residual
 
 class UW_DOME_CALIBRATION:
@@ -137,51 +143,13 @@ class UW_DOME_CALIBRATION:
         objp = np.zeros((1, BOARD_HEIGHT*BOARD_WIDTH, 3), np.float32)
         objp[0,:,:2] = np.mgrid[0 : BOARD_WIDTH, 0 : BOARD_HEIGHT].T.reshape(-1,2) * SQUARE_SIZE
 
-        objpoints = [] # 3d point in real world space
-        imgpoints = [] # 2d points in image plane.
-        img_shape = None
-
-        # Parse chessboards from images
-        images = glob.glob(IMAGES_PATH_AIR + IMAGES_TYPE)
-        print("Parsing chessboards in air")
-
-        for fname in images:
-            img = cv2.imread(fname)
-            img_shape = img.shape[:2]
-            h, w = img.shape[:2]
-            gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
-
-            # Find the chess board corners
-            ret, corners = cv2.findChessboardCorners(gray, (BOARD_WIDTH,BOARD_HEIGHT),None)
-
-            # If found, add object points, image points (after refining them)
-            if ret == True:
-                objpoints.append(objp)
-
-                cv2.cornerSubPix(gray, corners, (11, 11), (-1, -1), criteria)
-                imgpoints.append(corners)
-
-        print("Calibrating Camera in Air...")
-
-        N_OK = len(objpoints)
-        DIM = img_shape
-        print("Found " + str(N_OK) + " valid images for calibration")
-        print("DIM = " + str(img_shape[::-1]))
-
-        self.K = np.zeros((3, 3))
-        self.D = np.zeros((4, 1))
-        ret, self.K, self.D, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, gray.shape[::-1], None, None)
-        print("K = np.array(" + str(self.K.tolist()) + ")")
-        print("D = np.array(" + str(self.D.tolist()) + ")")
-
-        # get underwater chessboard 3d poses
-        self.objpoints = []
-        self.imgpoints = []
+        self.objpoints = [] # 3d point in real world space
+        self.imgpoints = [] # 2d points in image plane.
         self.img_shape = None
 
         # Parse chessboards from images
-        images = glob.glob(IMAGES_PATH_AIR + IMAGES_TYPE)
-        print("Parsing chessboards underwater")
+        images = glob.glob(IMAGES_PATH + IMAGES_TYPE)
+        print("Parsing chessboards")
 
         for fname in images:
             img = cv2.imread(fname)
@@ -199,7 +167,18 @@ class UW_DOME_CALIBRATION:
                 cv2.cornerSubPix(gray, corners, (11, 11), (-1, -1), criteria)
                 self.imgpoints.append(corners)
 
-        ret, K, D, self.rvecs, self.tvecs = cv2.calibrateCamera(self.objpoints, self.imgpoints, gray.shape[::-1], None, None)
+        print("Calibrating...")
+
+        N_OK = len(self.objpoints)
+        DIM = self.img_shape
+        print("Found " + str(N_OK) + " valid images for calibration")
+        print("DIM = " + str(self.img_shape[::-1]))
+
+        self.K = np.zeros((3, 3))
+        self.D = np.zeros((4, 1))
+        ret, self.K, self.D, self.rvecs, self.tvecs = cv2.calibrateCamera(self.objpoints, self.imgpoints, gray.shape[::-1], None, None)
+        print("K = np.array(" + str(self.K.tolist()) + ")")
+        print("D = np.array(" + str(self.D.tolist()) + ")")
 
         self.n_w = 1.333
         self.n_a = 1.0
@@ -209,6 +188,16 @@ class UW_DOME_CALIBRATION:
 
         self.imgpoints = np.squeeze(self.imgpoints)
         self.objpoints = np.squeeze(self.objpoints)
+
+        # compute chessborad transformation
+        # self.rvecs2 = []
+        # self.tvecs2 = []
+        # for img_id in range(len(self.imgpoints)):
+        #     ret, rvec, tvec = cv2.solvePnP(self.objpoints[img_id], self.imgpoints[img_id], self.K, self.D, flags=cv2.SOLVEPNP_EPNP)
+        #     self.rvecs2.append(rvec)
+        #     self.tvecs2.append(tvec)
+
+            # print("img_id: {}, rvec_diff:{}, tvec_diff:{}".format(img_id, self.rvecs[img_id] - rvec, self.tvecs[img_id] - tvec))
 
     def compute_air_calibration_residual(self):
         mean_error = 0
@@ -229,23 +218,28 @@ class UW_DOME_CALIBRATION:
         high_bound = [self.r_in/2, self.r_in/2, self.r_in]
         bound = (low_bound, high_bound)
 
+        print("------------------------------------")
+        print("Finding best camera center offset...")
         reprojection_imgpoints = partial(self.find_best_reprojection_imgpoints, self.imgpoints, self.objpoints, self.rvecs, self.tvecs, cal_params, dome_params)
 
         # residual = reprojection_imgpoints(init_camera_center_offset)
         # print(residual)
 
-        # result = least_squares(reprojection_imgpoints, init_camera_center_offset, bounds=bound, ftol=1e-8, diff_step=1e3, jac='2-point')
+        # result = least_squares(reprojection_imgpoints, init_camera_center_offset, bounds=bound, ftol=1e-5, diff_step=1e-3)
         # result = newton(reprojection_imgpoints, init_camera_center_offset)
-        result = least_squares(reprojection_imgpoints, init_camera_center_offset, ftol=1e-5, method='lm', diff_step=1e-3)
+        result = least_squares(reprojection_imgpoints, init_camera_center_offset, ftol=1e-5, method='lm', diff_step=1e-4)
         print("optimized camera center offset: ", result.x)
 
     def find_best_reprojection_imgpoints(self, imgpoints, objpoints, rvecs, tvecs, cal_params, dome_params, camera_center_offset):
         total_residual = 0
         all_residual = []
+        print("------------------------------------")
         print("camera center offset: ", camera_center_offset)
 
-        for img_id in range(0, len(imgpoints), 5):
-        # for img_id in range(1):
+        # for img_id in range(0, len(imgpoints), 10):
+        for img_id in [2]:
+            # print("img_id: ", img_id)
+
             minimize_residuals = partial(ray_trace_residuals, imgpoints[img_id], objpoints[img_id], rvecs[img_id], tvecs[img_id], cal_params, dome_params, camera_center_offset)
 
             init_reprojected_imgpoints = []
@@ -254,9 +248,12 @@ class UW_DOME_CALIBRATION:
 
             # minimize_residuals(init_reprojected_imgpoints)
 
-            result = least_squares(minimize_residuals, init_reprojected_imgpoints, xtol=1e-7)
+            print("Finding best reprojected position...")
+            init_time = time.time()
+            result = least_squares(minimize_residuals, init_reprojected_imgpoints, ftol=1e-6)
             best_reproj_imgpoints = result.x
             # print(best_reproj_imgpoints)
+            # print("3d position mean residual: ", result.cost)
 
             # compute image points residual
             for i, cornerpoints in enumerate(imgpoints[img_id]):
@@ -264,11 +261,19 @@ class UW_DOME_CALIBRATION:
                 residual = reproject_imgpoints - cornerpoints
                 all_residual.extend(residual)
                 total_residual += LA.norm(residual)
+                # print("imgpoint: ", cornerpoints)
+                # print("reprojected imgpoint: ", reproject_imgpoints)
+                # print("cornerid: {}, residual: {}, residual_norm: {}".format(i, residual, LA.norm(residual)))
 
-        print("reprojection residual: ", total_residual)
+        mean_residual = total_residual / len(all_residual)
+        print("mean reprojection residual: ", mean_residual)
+        print("total reprojection residual: ", total_residual)
+        print("time to find best reprojected position: ", time.time() - init_time, "s")
+        print("------------------------------------")
         # print(all_residual)
 
         return all_residual
+        # return total_residual
 
 
 if __name__ == "__main__":
@@ -276,5 +281,5 @@ if __name__ == "__main__":
     uw = UW_DOME_CALIBRATION()
     uw.find_camera_center_offset()
 
-    print(time.time() - init_time)
+    print("time: ", time.time() - init_time, "s")
     
